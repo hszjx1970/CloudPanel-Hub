@@ -3,16 +3,11 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { FileItem, OrganizationPlan } from "../types";
 
-const API_KEY = process.env.API_KEY;
-
-if (!API_KEY) {
-  console.warn("API_KEY not found in environment variables. AI features will not work.");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+// FIX: Per coding guidelines, initialize GoogleGenAI with a named apiKey parameter and use process.env.API_KEY directly.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const suggestNewFileName = async (currentName: string): Promise<string | null> => {
-  if (!API_KEY) return null;
+  // FIX: Removed API_KEY check as per guidelines assuming it's always available.
   
   try {
     const prompt = `Suggest a clean, descriptive, and conventional file name for a file currently named "${currentName}". Follow these rules:
@@ -40,7 +35,7 @@ export const suggestNewFileName = async (currentName: string): Promise<string | 
 
 
 export const suggestOrganizationPlan = async (files: FileItem[], currentPath: string): Promise<OrganizationPlan | null> => {
-  if (!API_KEY) return null;
+  // FIX: Removed API_KEY check as per guidelines assuming it's always available.
 
   const fileNames = files.filter(f => f.type === 'file').map(f => f.name);
   if (fileNames.length === 0) return null;

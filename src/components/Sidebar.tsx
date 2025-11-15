@@ -16,7 +16,6 @@ import { QuarkDriveIcon } from './icons/QuarkDriveIcon';
 import { TencentWeiyunIcon } from './icons/TencentWeiyunIcon';
 import { MegaIcon } from './icons/MegaIcon';
 import { ComputerIcon } from './icons/ComputerIcon';
-import { BrandedIcon } from './icons/BrandedIcon';
 
 interface SidebarProps {
   accounts: CloudAccount[];
@@ -47,9 +46,10 @@ export const providerIcons: Record<string, React.FC<{ className?: string }>> = {
 
 const AccountItem: React.FC<{ account: CloudAccount; children: React.ReactNode }> = ({ account, children }) => {
   const { t } = useContext(LanguageContext);
+  const Icon = providerIcons[account.provider] || ShieldIcon;
   return (
     <div className="flex items-center space-x-3 p-3 rounded-lg transition-colors duration-200 bg-white shadow-sm border border-gray-200">
-      <BrandedIcon provider={account.provider} className="w-8 h-8 flex-shrink-0" />
+      <Icon className="w-8 h-8 flex-shrink-0" />
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-sm truncate text-brand-dark">{t(`provider_${account.provider}`)}</p>
         <p className="text-xs text-brand-secondary truncate">{account.email}</p>

@@ -1,17 +1,9 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { FileItem, OrganizationPlan } from "../types";
 
-const API_KEY = import.meta.env.VITE_API_KEY;
-
-if (!API_KEY) {
-  console.warn("API_KEY not found in environment variables. AI features will be disabled.");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY! });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const suggestNewFileName = async (currentName: string): Promise<string | null> => {
-  if (!API_KEY) return Promise.resolve(null);
-  
   try {
     const prompt = `Suggest a clean, descriptive, and conventional file name for a file currently named "${currentName}". Follow these rules:
 1. Use snake_case or kebab-case.
@@ -31,7 +23,7 @@ export const suggestNewFileName = async (currentName: string): Promise<string | 
 };
 
 export const suggestOrganizationPlan = async (files: FileItem[], currentPath: string): Promise<OrganizationPlan | null> => {
-  if (!API_KEY || files.length === 0) return Promise.resolve(null);
+  if (files.length === 0) return Promise.resolve(null);
 
   const fileNames = files.map(f => f.name);
 

@@ -8,8 +8,8 @@ import { TrashIcon } from './icons/TrashIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { UploadIcon } from './icons/UploadIcon';
 import { DownloadIcon } from './icons/DownloadIcon';
-import { BrandedIcon } from './icons/BrandedIcon';
 import { ShieldIcon } from './icons/ShieldIcon';
+import { providerIcons } from './Sidebar';
 
 interface FileExplorerProps {
   titleKey: 'source' | 'destination';
@@ -86,6 +86,7 @@ const FileExplorer: React.FC<FileExplorerProps> = (props) => {
 
   const allSelected = selectedFileIds && files.length > 0 && selectedFileIds.size === files.length;
   const someSelected = selectedFileIds && selectedFileIds.size > 0 && !allSelected;
+  const AccountIcon = account ? providerIcons[account.provider] : ShieldIcon;
 
   return (
     <div className={`bg-white rounded-xl shadow-lg flex flex-col h-full overflow-hidden border border-gray-200 relative transition-all duration-300 ${isDragOver ? 'border-dashed border-2 border-brand-primary' : ''}`} onDragOver={(e) => { e.preventDefault(); if (onDropTransfer) setIsDragOver(true); }} onDragLeave={() => setIsDragOver(false)} onDrop={(e) => { e.preventDefault(); setIsDragOver(false); if (onDropTransfer && e.dataTransfer.types.includes('application/json')) { const ids = JSON.parse(e.dataTransfer.getData('application/json')); onDropTransfer(ids); } }}>
@@ -93,7 +94,7 @@ const FileExplorer: React.FC<FileExplorerProps> = (props) => {
       
       <header className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 flex-wrap">
         <div className="flex items-center">
-            {account ? <BrandedIcon provider={account.provider} className="w-8 h-8 mr-3"/> : <ShieldIcon className="w-8 h-8 mr-3 text-gray-300" />}
+            <AccountIcon className={`w-8 h-8 mr-3 ${!account ? 'text-gray-300' : ''}`}/>
             <div>
               <h3 className="font-bold text-lg text-brand-dark">{t(titleKey)}</h3>
               {account ? <p className="text-sm text-brand-secondary">{account.email}</p> : <p className="text-sm text-gray-400">{t('noAccountSelected')}</p>}

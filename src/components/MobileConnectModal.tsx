@@ -1,3 +1,5 @@
+// FIX: Removed `/// <reference types="vite/client" />` which was causing an error.
+// The necessary type for `import.meta.env` is now provided globally in `src/types.ts`.
 import React, { useState, useContext, useMemo, useEffect, useRef } from 'react';
 import { LanguageContext } from '../contexts/LanguageContext';
 import { Html5Qrcode } from 'html5-qrcode';
@@ -17,7 +19,7 @@ const MobileConnectModal: React.FC<MobileConnectModalProps> = ({ isOpen, onClose
 
   const isMobile = useMemo(() => /Mobi/i.test(window.navigator.userAgent), []);
   const isDev = import.meta.env.DEV;
-  const port = useMemo(() => isDev ? '5173' : (window.location.port || (window.location.protocol === 'https:' ? '443' : '80')), [isDev]);
+  const port = useMemo(() => isDev ? '3000' : (window.location.port || (window.location.protocol === 'https:' ? '443' : '80')), [isDev]);
 
   useEffect(() => {
     const initializeIp = async () => {
@@ -29,8 +31,9 @@ const MobileConnectModal: React.FC<MobileConnectModalProps> = ({ isOpen, onClose
       setIsLoading(false);
     };
 
-    if (isOpen) initializeIp();
-  }, [isOpen, isElectron]);
+    if (isOpen && !isMobile) initializeIp();
+    else if (isOpen && isMobile) setIsLoading(false);
+  }, [isOpen, isElectron, isMobile]);
   
   useEffect(() => {
     if (!isOpen || !isScanning || !isMobile) return;
@@ -70,7 +73,7 @@ const MobileConnectModal: React.FC<MobileConnectModalProps> = ({ isOpen, onClose
     <>
       <p className="text-brand-secondary mb-6">{t('mobileConnectScanSubtitle')}</p>
       <div className="flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg">
-        {qrCodeUrl ? <img src={qrCodeUrl} alt="QR Code" /> : <div className="w-[200px] h-[200px] flex items-center justify-center text-sm text-gray-500">{t('loading')}...</div>}
+        {qrCodeUrl ? <img src={qrCodeUrl} alt="QR Code" /> : <div className="w-[200px] h-[200px] flex items-center justify-center text-sm text-gray-500">{t('loading')}</div>}
         <p className="mt-2 text-sm font-semibold text-brand-dark">{t('scanToConnect')}</p>
         {localIp && <p className="text-xs text-gray-500">{localIp}:{port}</p>}
       </div>
@@ -97,7 +100,7 @@ const MobileConnectModal: React.FC<MobileConnectModalProps> = ({ isOpen, onClose
     <div className="fixed inset-0 bg-black bg-opacity-50 z-[100] flex justify-center items-center p-4" onClick={onClose}>
       <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md" role="dialog" aria-modal="true" onClick={e => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-4"><h2 className="text-2xl font-bold text-brand-dark">{t('mobileConnectTitle')}</h2><button onClick={onClose} className="text-gray-400 hover:text-gray-700 text-2xl font-light">&times;</button></div>
-        {isLoading ? <div>{t('loading')}...</div> : (isMobile ? renderMobileView() : renderDesktopView())}
+        {isLoading ? <div>{t('loading')}</div> : (isMobile ? renderMobileView() : renderDesktopView())}
       </div>
     </div>
   );

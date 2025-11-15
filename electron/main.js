@@ -32,7 +32,7 @@ function createWindow() {
 
     if (isDev) {
         // In development, load from the Vite dev server
-        mainWindow.loadURL('http://localhost:5173');
+        mainWindow.loadURL('http://localhost:3000');
         mainWindow.webContents.openDevTools();
     } else {
         // In production, load the built index.html

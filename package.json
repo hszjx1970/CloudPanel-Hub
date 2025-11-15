@@ -34,8 +34,7 @@
     "productName": "Cloud Transfer Hub",
     "files": [
       "dist/**/*",
-      "electron/**/*",
-      "assets/icon.png"
+      "electron/**/*"
     ],
     "directories": {
       "buildResources": "assets",

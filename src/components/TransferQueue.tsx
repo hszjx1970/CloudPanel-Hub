@@ -6,7 +6,8 @@ import { PlayIcon } from './icons/PlayIcon';
 import { RetryIcon } from './icons/RetryIcon';
 import { CloseIcon } from './icons/CloseIcon';
 import { LanguageContext } from '../contexts/LanguageContext';
-import { BrandedIcon } from './icons/BrandedIcon';
+import { providerIcons } from './Sidebar';
+import { ShieldIcon } from './icons/ShieldIcon';
 
 interface TransferQueueProps {
   jobs: TransferJob[];
@@ -40,6 +41,8 @@ const StatusIndicator: React.FC<{ status: TransferStatus }> = ({ status }) => {
 
 const JobItem: React.FC<Omit<TransferQueueProps, 'jobs'> & { job: TransferJob }> = ({ job, onPause, onResume, onRetry, onRemove }) => {
   const { t } = useContext(LanguageContext);
+  const SourceIcon = providerIcons[job.source.provider] || ShieldIcon;
+  const DestIcon = providerIcons[job.destination.provider] || ShieldIcon;
 
   return (
     <li className="p-3 bg-white rounded-lg shadow-sm border border-gray-200">
@@ -55,9 +58,9 @@ const JobItem: React.FC<Omit<TransferQueueProps, 'jobs'> & { job: TransferJob }>
           </div>
         </div>
         <div className="flex items-center space-x-2 text-xs text-brand-secondary flex-shrink-0 ml-2">
-          <BrandedIcon provider={job.source.provider} className="w-4 h-4" />
+          <SourceIcon className="w-4 h-4" />
           <span>→</span>
-          <BrandedIcon provider={job.destination.provider} className="w-4 h-4" />
+          <DestIcon className="w-4 h-4" />
         </div>
       </div>
       <div className="mt-2 flex items-center space-x-2">
