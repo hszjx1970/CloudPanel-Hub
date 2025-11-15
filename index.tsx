@@ -8,7 +8,8 @@ if (!rootElement) {
   throw new Error("Could not find root element to mount to");
 }
 
-if ('serviceWorker' in navigator) {
+// Only register the service worker in a browser environment, not in Electron.
+if ('serviceWorker' in navigator && !window.electronAPI) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').then(registration => {
       console.log('ServiceWorker registration successful with scope: ', registration.scope);
