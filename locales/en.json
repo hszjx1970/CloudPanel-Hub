@@ -40,6 +40,7 @@
   "statusPaused": "Paused",
   "errorPrefix": "Error:",
   "rename": "Rename",
+  "aiRename": "AI Rename",
   "delete": "Delete",
   "newFolder": "+ New Folder",
   "confirmDelete": "Are you sure you want to delete the selected item(s)?",

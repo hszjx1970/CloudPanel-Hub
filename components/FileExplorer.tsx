@@ -75,6 +75,7 @@ const FileExplorer: React.FC<FileExplorerProps> = (props) => {
   const { t } = useContext(LanguageContext);
   const [isDragOver, setIsDragOver] = useState(false);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; fileId: string; } | null>(null);
+  const [renamingFileId, setRenamingFileId] = useState<string | null>(null);
   const fileExplorerRef = useRef<HTMLDivElement>(null);
   
   const hasFiles = files.filter(f => f.type === FileType.File).length > 0;
@@ -152,6 +153,12 @@ const FileExplorer: React.FC<FileExplorerProps> = (props) => {
     }
   };
 
+  const handleTriggerRename = () => {
+    if (selectedFileIds?.size === 1) {
+      setRenamingFileId(Array.from(selectedFileIds)[0]);
+    }
+  };
+
   const allSelected = selectedFileIds && files.length > 0 && selectedFileIds.size === files.length;
   const someSelected = selectedFileIds && selectedFileIds.size > 0 && selectedFileIds.size < files.length;
 
@@ -182,7 +189,7 @@ const FileExplorer: React.FC<FileExplorerProps> = (props) => {
         <div className="flex items-center space-x-1">
             {!isDestination && onNewFolder && (
               <button onClick={onNewFolder} disabled={isLoading} className="p-2 rounded-full hover:bg-gray-200 disabled:opacity-50 transition-colors" title={t('newFolder')}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2-2H5a2 2 0 01-2-2z" /></svg>
               </button>
             )}
             {!isDestination && onSmartOrganize && (
@@ -202,7 +209,7 @@ const FileExplorer: React.FC<FileExplorerProps> = (props) => {
         </div>
         {!isDestination && (
             <div className="flex items-center space-x-1 pl-2">
-                <button onClick={() => { if (onManualRename && selectedFileIds?.size === 1) { /* Logic to trigger inline rename would go here */ } }} disabled={isRenameDisabled} className="p-2 rounded-full hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed" title={t('rename')}>
+                <button onClick={handleTriggerRename} disabled={isRenameDisabled} className="p-2 rounded-full hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed" title={t('rename')}>
                     <PencilIcon className="w-4 h-4 text-gray-600" />
                 </button>
                 <button onClick={handleDelete} disabled={isDeleteDisabled} className="p-2 rounded-full hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed" title={t('delete')}>
@@ -256,6 +263,8 @@ const FileExplorer: React.FC<FileExplorerProps> = (props) => {
                 isDraggable={!isDestination}
                 onDragStart={handleDragStart}
                 onContextMenu={handleContextMenu}
+                renamingFileId={renamingFileId}
+                onRenameEnd={() => setRenamingFileId(null)}
               />
             ))}
           </tbody>
@@ -267,7 +276,7 @@ const FileExplorer: React.FC<FileExplorerProps> = (props) => {
           </div>
         )}
       </div>
-      {contextMenu && <ContextMenu {...contextMenu} file={files.find(f => f.id === contextMenu.fileId)} onDelete={onDelete} onManualRename={onManualRename} onAiRename={onAiRenameFile} onClose={() => setContextMenu(null)} />}
+      {contextMenu && <ContextMenu {...contextMenu} file={files.find(f => f.id === contextMenu.fileId)} onDelete={onDelete} onTriggerManualRename={setRenamingFileId} onAiRename={onAiRenameFile} onClose={() => setContextMenu(null)} />}
     </div>
   );
 };

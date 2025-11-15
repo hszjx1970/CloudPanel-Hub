@@ -11,11 +11,11 @@ interface ContextMenuProps {
   file?: FileItem;
   onClose: () => void;
   onDelete?: (fileIds: string[]) => void;
-  onManualRename?: (fileId: string, newName: string) => void;
+  onTriggerManualRename?: (fileId: string) => void;
   onAiRename?: (fileId: string) => void;
 }
 
-const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, file, onClose, onDelete, onManualRename, onAiRename }) => {
+const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, file, onClose, onDelete, onTriggerManualRename, onAiRename }) => {
     const { t } = useContext(LanguageContext);
 
     if (!file) return null;
@@ -29,11 +29,8 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, file, onClose, onDelete
         if(onDelete) onDelete([file.id]);
     }
 
-    // A real implementation of manual rename would likely trigger an inline input in FileItemRow
-    // This is a placeholder for that logic.
     const handleRename = () => {
-       // This would typically be handled in the FileItemRow component by setting a state
-       console.log("Rename action triggered for", file.id);
+       if(onTriggerManualRename) onTriggerManualRename(file.id);
     }
     
     const handleAiRename = () => {
@@ -47,7 +44,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, file, onClose, onDelete
             onClick={(e) => e.stopPropagation()}
         >
             <ul className="py-1 text-sm text-gray-700">
-                {onManualRename && (
+                {onTriggerManualRename && (
                      <li>
                         <button onClick={() => handleAction(handleRename)} className="flex items-center w-full px-4 py-2 hover:bg-gray-100">
                             <PencilIcon className="w-4 h-4 mr-3" />
@@ -59,7 +56,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, file, onClose, onDelete
                      <li>
                         <button onClick={() => handleAction(handleAiRename)} className="flex items-center w-full px-4 py-2 hover:bg-gray-100">
                             <MagicWandIcon className="w-4 h-4 mr-3 text-purple-600" />
-                            AI {t('rename')}
+                            {t('aiRename')}
                         </button>
                     </li>
                 )}

@@ -16,6 +16,8 @@ interface FileItemRowProps {
   isDraggable: boolean;
   onDragStart: (e: React.DragEvent, file: FileItem) => void;
   onContextMenu: (e: React.MouseEvent, fileId: string) => void;
+  renamingFileId: string | null;
+  onRenameEnd: () => void;
 }
 
 const formatBytes = (bytes: number, decimals = 2) => {
@@ -28,11 +30,17 @@ const formatBytes = (bytes: number, decimals = 2) => {
 };
 
 const FileItemRow: React.FC<FileItemRowProps> = (props) => {
-  const { file, isSelected, onSelect, onAiRename, isSelectable, onFolderClick, isDraggable, onDragStart, onContextMenu, onManualRename } = props;
+  const { file, isSelected, onSelect, onAiRename, isSelectable, onFolderClick, isDraggable, onDragStart, onContextMenu, onManualRename, renamingFileId, onRenameEnd } = props;
   
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(file.name);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (renamingFileId === file.id) {
+      setIsRenaming(true);
+    }
+  }, [renamingFileId, file.id]);
 
   useEffect(() => {
     if (isRenaming && inputRef.current) {
@@ -74,10 +82,13 @@ const FileItemRow: React.FC<FileItemRowProps> = (props) => {
   }
   
   const handleRenameSubmit = () => {
-    if (onManualRename && renameValue.trim() && renameValue !== file.name) {
-        onManualRename(file.id, renameValue.trim());
+    if (isRenaming) {
+        if (onManualRename && renameValue.trim() && renameValue !== file.name) {
+            onManualRename(file.id, renameValue.trim());
+        }
+        setIsRenaming(false);
+        onRenameEnd();
     }
-    setIsRenaming(false);
   };
   
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -85,6 +96,7 @@ const FileItemRow: React.FC<FileItemRowProps> = (props) => {
     if (e.key === 'Escape') {
         setRenameValue(file.name);
         setIsRenaming(false);
+        onRenameEnd();
     }
   };
 

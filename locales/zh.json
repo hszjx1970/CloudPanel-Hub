@@ -40,6 +40,7 @@
   "statusPaused": "已暂停",
   "errorPrefix": "错误：",
   "rename": "重命名",
+  "aiRename": "AI 重命名",
   "delete": "删除",
   "newFolder": "+ 新建文件夹",
   "confirmDelete": "您确定要删除所选的项目吗？",
