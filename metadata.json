@@ -1,0 +1,5 @@
+{
+  "name": "CloudPanel Hub",
+  "description": "An application to integrate and manage file transfers between various cloud storage services. This demonstration uses mock data to simulate connecting to accounts and transferring files.",
+  "requestFramePermissions": []
+}
