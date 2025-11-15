@@ -1,5 +1,3 @@
-// FIX: Removed `/// <reference types="vite/client" />` which was causing a "Cannot find type definition file" error.
-
 export enum CloudProvider {
   GoogleDrive = 'Google Drive',
   Dropbox = 'Dropbox',
@@ -82,11 +80,5 @@ export interface IElectronAPI {
 declare global {
     interface Window {
         electronAPI: IElectronAPI;
-    }
-    // FIX: Manually defined `import.meta.env` to resolve errors after removing the problematic "vite/client" types.
-    interface ImportMeta {
-        readonly env: {
-            readonly DEV: boolean;
-        };
     }
 }

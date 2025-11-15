@@ -1,5 +1,5 @@
-// FIX: Removed `/// <reference types="vite/client" />` which was causing an error.
-// The necessary type for `import.meta.env` is now provided globally in `src/types.ts`.
+/// <reference types="vite/client" />
+
 import React, { useState, useContext, useMemo, useEffect, useRef } from 'react';
 import { LanguageContext } from '../contexts/LanguageContext';
 import { Html5Qrcode } from 'html5-qrcode';
