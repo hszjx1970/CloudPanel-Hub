@@ -69,5 +69,11 @@
   "provider_OneDrive": "OneDrive",
   "provider_Baidu Pan": "百度网盘",
   "provider_Aliyun Drive": "阿里云盘",
+  "provider_UCDrive": "UC 网盘",
+  "provider_Huawei Cloud": "华为云",
+  "provider_115 Pan": "115 网盘",
+  "provider_Quark Drive": "夸克网盘",
+  "provider_Tencent Weiyun": "腾讯微云",
+  "provider_MEGA": "MEGA",
   "provider_Local": "本地电脑"
 }

@@ -35,17 +35,18 @@
 This guide provides the simplest way to get the application running on your system, without needing to manually type commands.
 
 ### Prerequisites (先决条件)
-*   [Node.js](https://nodejs.org/) (version 18 or newer is recommended) must be installed on your system.
+*   [Node.js](https://nodejs.org/) (version 18 or newer is recommended) must be installed on your system. The setup script will check for this and provide guidance if it's missing.
 
 ### For Windows Users
 
-1.  **Install Dependencies**: Double-click the `setup.bat` file. A command prompt will open, install all necessary components, and then prompt you to press any key to close.
+1.  **Install Dependencies**: Double-click the `setup.bat` file. A command prompt will open, check for Node.js, install all necessary components, and then prompt you to press any key to close.
 2.  **Run the Application**: Double-click the `run.bat` file. This will launch the application in development mode. Two windows will appear: a command prompt running the web server, and the application window itself.
 
 ### For macOS / Linux Users
 
-1.  **Install Dependencies**: Open your terminal, navigate to the project directory, and run the command: `./setup.sh`. You may need to grant it execution permissions first (`chmod +x setup.sh`).
-2.  **Run the Application**: In the same terminal, run the command: `./run.sh`. You may need to grant it execution permissions first (`chmod +x run.sh`).
+1.  **Make Scripts Executable (First Time Only)**: Open your terminal, navigate to the project directory, and run `chmod +x setup.sh run.sh`. You only need to do this once.
+2.  **Install Dependencies**: Run the command: `./setup.sh`. The script will check for Node.js and install all components.
+3.  **Run the Application**: In the same terminal, run the command: `./run.sh`.
 
 ---
 

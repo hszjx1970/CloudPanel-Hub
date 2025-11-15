@@ -1,9 +1,17 @@
+/// <reference types="vite/client" />
+
 export enum CloudProvider {
   GoogleDrive = 'Google Drive',
   Dropbox = 'Dropbox',
   OneDrive = 'OneDrive',
   BaiduPan = 'Baidu Pan',
+  UCDrive = 'UC Drive',
+  HuaweiCloud = 'Huawei Cloud',
   AliyunDrive = 'Aliyun Drive',
+  Pan115 = '115 Pan',
+  QuarkDrive = 'Quark Drive',
+  TencentWeiyun = 'Tencent Weiyun',
+  Mega = 'MEGA',
   Local = 'Local',
 }
 
@@ -71,20 +79,7 @@ export interface IElectronAPI {
     getLocalIP: () => Promise<string | null>;
 }
 
-// FIX: Moved ImportMetaEnv and ImportMeta definitions into a `declare global` block
-// to correctly augment the global types and resolve TypeScript errors for `import.meta.env`.
 declare global {
-    // Fix for Vite client types not being found by replacing the reference with manual definitions.
-    // This resolves errors related to `import.meta.env`.
-    interface ImportMetaEnv {
-      readonly VITE_API_KEY: string;
-      readonly DEV: boolean;
-    }
-
-    interface ImportMeta {
-      readonly env: ImportMetaEnv;
-    }
-
     interface Window {
         electronAPI: IElectronAPI;
     }

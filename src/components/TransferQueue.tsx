@@ -1,18 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { TransferJob, TransferStatus, CloudProvider } from '../types';
-import { GoogleDriveIcon } from './icons/GoogleDriveIcon';
-import { DropboxIcon } from './icons/DropboxIcon';
-import { OneDriveIcon } from './icons/OneDriveIcon';
-import { BaiduPanIcon } from './icons/BaiduPanIcon';
-import { CloudIcon } from './icons/CloudIcon';
+import { TransferJob, TransferStatus } from '../types';
 import { TransferIcon } from './icons/TransferIcon';
-import { AliyunDriveIcon } from './icons/AliyunDriveIcon';
 import { PauseIcon } from './icons/PauseIcon';
 import { PlayIcon } from './icons/PlayIcon';
 import { RetryIcon } from './icons/RetryIcon';
 import { CloseIcon } from './icons/CloseIcon';
 import { LanguageContext } from '../contexts/LanguageContext';
-import { ComputerIcon } from './icons/ComputerIcon';
+import { BrandedIcon } from './icons/BrandedIcon';
 
 interface TransferQueueProps {
   jobs: TransferJob[];
@@ -21,15 +15,6 @@ interface TransferQueueProps {
   onRetry: (jobId: string) => void;
   onRemove: (jobId: string) => void;
 }
-
-const providerIcons: Record<string, React.FC<{ className: string }>> = {
-  [CloudProvider.GoogleDrive]: GoogleDriveIcon,
-  [CloudProvider.Dropbox]: DropboxIcon,
-  [CloudProvider.OneDrive]: OneDriveIcon,
-  [CloudProvider.BaiduPan]: BaiduPanIcon,
-  [CloudProvider.AliyunDrive]: AliyunDriveIcon,
-  [CloudProvider.Local]: ComputerIcon,
-};
 
 const formatBytes = (bytes: number, decimals = 2) => {
   if (!+bytes) return '0 Bytes';
@@ -55,8 +40,6 @@ const StatusIndicator: React.FC<{ status: TransferStatus }> = ({ status }) => {
 
 const JobItem: React.FC<Omit<TransferQueueProps, 'jobs'> & { job: TransferJob }> = ({ job, onPause, onResume, onRetry, onRemove }) => {
   const { t } = useContext(LanguageContext);
-  const SourceIcon = providerIcons[job.source.provider] || CloudIcon;
-  const DestIcon = providerIcons[job.destination.provider] || CloudIcon;
 
   return (
     <li className="p-3 bg-white rounded-lg shadow-sm border border-gray-200">
@@ -72,7 +55,9 @@ const JobItem: React.FC<Omit<TransferQueueProps, 'jobs'> & { job: TransferJob }>
           </div>
         </div>
         <div className="flex items-center space-x-2 text-xs text-brand-secondary flex-shrink-0 ml-2">
-          <SourceIcon className="w-4 h-4" /><span>→</span><DestIcon className="w-4 h-4" />
+          <BrandedIcon provider={job.source.provider} className="w-4 h-4" />
+          <span>→</span>
+          <BrandedIcon provider={job.destination.provider} className="w-4 h-4" />
         </div>
       </div>
       <div className="mt-2 flex items-center space-x-2">

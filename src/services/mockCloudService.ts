@@ -6,27 +6,50 @@ let mockAccounts: CloudAccount[] = [
   { id: 'acc_3', provider: CloudProvider.OneDrive, email: 'user@outlook.com' },
   { id: 'acc_4', provider: CloudProvider.BaiduPan, email: 'user@baidu.com' },
   { id: 'acc_5', provider: CloudProvider.AliyunDrive, email: 'user@aliyun.com' },
+  { id: 'acc_6', provider: CloudProvider.Pan115, email: 'user@115.com' },
+  { id: 'acc_7', provider: CloudProvider.UCDrive, email: 'user@uc.cn' },
+  { id: 'acc_8', provider: CloudProvider.HuaweiCloud, email: 'user@huawei.com' },
+  { id: 'acc_9', provider: CloudProvider.QuarkDrive, email: 'user@quark.com' },
+  { id: 'acc_10', provider: CloudProvider.TencentWeiyun, email: 'user@qq.com' },
+  { id: 'acc_11', provider: CloudProvider.Mega, email: 'user@mega.nz' },
 ];
 
-const allMockFiles: FileItem[] = [
+let allMockFiles: FileItem[] = [
+    // Account 1 (Google Drive)
     { id: 'f1_1', name: 'Documents', type: FileType.Folder, size: 0, modified: new Date('2023-10-26'), path: '/' },
     { id: 'f1_2', name: 'Photos', type: FileType.Folder, size: 0, modified: new Date('2023-10-25'), path: '/' },
     { id: 'f1_3', name: 'project_brief.docx', type: FileType.File, size: 15360, modified: new Date('2023-10-24'), path: '/' },
     { id: 'f1_4', name: 'vacation_photo_01.jpg', type: FileType.File, size: 4194304, modified: new Date('2023-08-15'), path: '/Photos/' },
     { id: 'f1_5', name: 'financials_q3.xlsx', type: FileType.File, size: 122880, modified: new Date('2023-10-20'), path: '/Documents/' },
+    { id: 'f1_6', name: 'Reports', type: FileType.Folder, size: 0, modified: new Date('2023-09-11'), path: '/Documents/' },
+    { id: 'f1_7', name: 'annual_report.pdf', type: FileType.File, size: 2400000, modified: new Date('2023-09-10'), path: '/Documents/Reports/' },
+    { id: 'f1_8', name: 'family_video_2023.mp4', type: FileType.File, size: 34298492, modified: new Date('2023-11-15'), path: '/' },
+    { id: 'f1_9', name: 'screenshot-1.png', type: FileType.File, size: 823491, modified: new Date('2023-11-10'), path: '/' },
+    
+    // Other accounts with simple structures
     { id: 'f2_1', name: 'Work', type: FileType.Folder, size: 0, modified: new Date('2023-09-01'), path: '/' },
-    { id: 'f2_2', name: 'receipt_september.pdf', type: FileType.File, size: 307200, modified: new Date('2023-10-05'), path: '/Work/' },
     { id: 'f3_1', name: 'Personal', type: FileType.Folder, size: 0, modified: new Date('2023-10-10'), path: '/' },
-    { id: 'f3_2', name: 'meeting_notes.txt', type: FileType.File, size: 2048, modified: new Date('2023-10-26'), path: '/' },
+    { id: 'f4_1', name: 'Backup', type: FileType.Folder, size: 0, modified: new Date('2023-01-01'), path: '/' },
+    { id: 'f5_1', name: 'Movies', type: FileType.Folder, size: 0, modified: new Date('2023-05-10'), path: '/' },
+    { id: 'f5_2', name: 'family_trip.mp4', type: FileType.File, size: 1073741824, modified: new Date('2023-05-09'), path: '/Movies/' },
+    { id: 'f6_1', name: 'Archive', type: FileType.Folder, size: 0, modified: new Date('2022-01-15'), path: '/' },
+    { id: 'f7_1', name: 'UC Downloads', type: FileType.Folder, size: 0, modified: new Date('2023-11-01'), path: '/' },
+    { id: 'f8_1', name: 'Phone Backup', type: FileType.Folder, size: 0, modified: new Date('2023-10-30'), path: '/' },
+    { id: 'f9_1', name: 'Quark Downloads', type: FileType.Folder, size: 0, modified: new Date('2023-11-05'), path: '/' },
+    { id: 'f10_1', name: 'QQ Files', type: FileType.Folder, size: 0, modified: new Date('2023-11-10'), path: '/' },
+    { id: 'f11_1', name: 'Secure Documents', type: FileType.Folder, size: 0, modified: new Date('2023-11-12'), path: '/' },
 ];
 
-const mockFilesByAccount: Record<string, FileItem[]> = {
-  'acc_1': allMockFiles.filter(f => f.id.startsWith('f1_')),
-  'acc_2': allMockFiles.filter(f => f.id.startsWith('f2_')),
-  'acc_3': allMockFiles.filter(f => f.id.startsWith('f3_')),
-  'acc_4': [],
-  'acc_5': [],
-};
+const mockFilesByAccount: Record<string, FileItem[]> = allMockFiles.reduce((acc, file) => {
+    const accIndex = parseInt(file.id.split('_')[0].substring(1), 10);
+    const accId = `acc_${accIndex}`;
+    if (!acc[accId]) {
+        acc[accId] = [];
+    }
+    acc[accId].push(file);
+    return acc;
+}, {} as Record<string, FileItem[]>);
+
 
 const SIMULATED_DELAY = 300;
 

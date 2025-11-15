@@ -69,5 +69,11 @@
   "provider_OneDrive": "OneDrive",
   "provider_Baidu Pan": "Baidu Pan",
   "provider_Aliyun Drive": "Aliyun Drive",
+  "provider_UCDrive": "UC Drive",
+  "provider_Huawei Cloud": "Huawei Cloud",
+  "provider_115 Pan": "115 Pan",
+  "provider_Quark Drive": "Quark Drive",
+  "provider_Tencent Weiyun": "Tencent Weiyun",
+  "provider_MEGA": "MEGA",
   "provider_Local": "Local Computer"
 }

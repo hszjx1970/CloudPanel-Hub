@@ -1,7 +1,6 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import { CloudAccount, FileItem, FileType } from '../types';
 import FileItemRow from './FileItem';
-import { CloudIcon } from './icons/CloudIcon';
 import { MagicWandIcon } from './icons/MagicWandIcon';
 import { LanguageContext } from '../contexts/LanguageContext';
 import ContextMenu from './ContextMenu';
@@ -9,6 +8,8 @@ import { TrashIcon } from './icons/TrashIcon';
 import { PencilIcon } from './icons/PencilIcon';
 import { UploadIcon } from './icons/UploadIcon';
 import { DownloadIcon } from './icons/DownloadIcon';
+import { BrandedIcon } from './icons/BrandedIcon';
+import { ShieldIcon } from './icons/ShieldIcon';
 
 interface FileExplorerProps {
   titleKey: 'source' | 'destination';
@@ -91,9 +92,12 @@ const FileExplorer: React.FC<FileExplorerProps> = (props) => {
       {isDragOver && <div className="absolute inset-0 bg-blue-500 bg-opacity-20 z-20 flex items-center justify-center pointer-events-none"><p className="p-4 bg-white rounded-lg shadow-xl font-bold text-brand-primary">{t('dropFilesToTransfer')}</p></div>}
       
       <header className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50 flex-wrap">
-        <div>
-          <h3 className="font-bold text-lg text-brand-dark">{t(titleKey)}</h3>
-          {account ? <p className="text-sm text-brand-secondary">{t(`provider_${account.provider}`)}: {account.email}</p> : <p className="text-sm text-gray-400">{t('noAccountSelected')}</p>}
+        <div className="flex items-center">
+            {account ? <BrandedIcon provider={account.provider} className="w-8 h-8 mr-3"/> : <ShieldIcon className="w-8 h-8 mr-3 text-gray-300" />}
+            <div>
+              <h3 className="font-bold text-lg text-brand-dark">{t(titleKey)}</h3>
+              {account ? <p className="text-sm text-brand-secondary">{account.email}</p> : <p className="text-sm text-gray-400">{t('noAccountSelected')}</p>}
+            </div>
         </div>
         <div className="flex items-center space-x-1">
           {!isDestination && onUpload && <><input type="file" ref={uploadInputRef} onChange={e => {if (e.target.files) onUpload(e.target.files); e.target.value = '';}} multiple hidden /><button onClick={() => uploadInputRef.current?.click()} disabled={isActionDisabled} className="p-2 rounded-full hover:bg-gray-200 disabled:opacity-50" title={t('upload')}><UploadIcon className="w-5 h-5 text-gray-600" /></button></>}
@@ -127,7 +131,7 @@ const FileExplorer: React.FC<FileExplorerProps> = (props) => {
             : files.map(file => <FileItemRow key={file.id} file={file} isSelected={selectedFileIds?.has(file.id) || false} onSelect={onFileSelect} isSelectable={!isDestination} onFolderClick={(f) => onPathChange(`${f.path}${f.name}/`)} isDraggable={!isDestination} onDragStart={(e, f) => e.dataTransfer.setData('application/json', JSON.stringify(selectedFileIds?.has(f.id) ? Array.from(selectedFileIds) : [f.id]))} onContextMenu={(e, id) => { e.preventDefault(); setContextMenu({ x: e.pageX, y: e.pageY, fileId: id }); }} renamingFileId={renamingFileId} onRenameEnd={() => setRenamingFileId(null)} onManualRename={onManualRename} />)}
           </tbody>
         </table>
-        {!isLoading && files.length === 0 && <div className="flex flex-col items-center justify-center text-center p-10 text-brand-secondary h-full"><CloudIcon className="w-16 h-16 mb-4 text-gray-300" /><p className="font-semibold">{account ? t('folderIsEmpty') : t('selectAccountToViewFiles')}</p></div>}
+        {!isLoading && files.length === 0 && <div className="flex flex-col items-center justify-center text-center p-10 text-brand-secondary h-full"><ShieldIcon className="w-16 h-16 mb-4 text-gray-300" /><p className="font-semibold">{account ? t('folderIsEmpty') : t('selectAccountToViewFiles')}</p></div>}
       </div>
       {contextMenu && <ContextMenu {...contextMenu} file={files.find(f => f.id === contextMenu.fileId)} onClose={() => setContextMenu(null)} onTriggerManualRename={setRenamingFileId} onAiRename={onAiRenameFile} onDelete={onDelete} onDownload={onDownload} />}
     </div>

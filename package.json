@@ -4,7 +4,7 @@
   "main": "electron/main.js",
   "private": true,
   "scripts": {
-    "start": "concurrently \"npm run dev\" \"npm run dev:electron\"",
+    "start": "concurrently -k \"npm:dev\" \"npm:dev:electron\"",
     "dev": "vite",
     "dev:electron": "electron .",
     "build": "tsc && vite build",
