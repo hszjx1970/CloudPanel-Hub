@@ -61,6 +61,7 @@
   "scanToConnect": "Scan to Connect",
   "updateIpAddress": "Update IP Address",
   "close": "Close",
+  "loading": "Loading",
   "provider_Google Drive": "Google Drive",
   "provider_Dropbox": "Dropbox",
   "provider_OneDrive": "OneDrive",

@@ -61,6 +61,7 @@
   "scanToConnect": "扫码连接",
   "updateIpAddress": "更新 IP 地址",
   "close": "关闭",
+  "loading": "加载中",
   "provider_Google Drive": "谷歌云端硬盘",
   "provider_Dropbox": "Dropbox",
   "provider_OneDrive": "OneDrive",

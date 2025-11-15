@@ -6,29 +6,55 @@ const IP_STORAGE_KEY = 'cloud-hub-local-ip';
 interface MobileConnectModalProps {
   isOpen: boolean;
   onClose: () => void;
+  isElectron: boolean;
 }
 
-const MobileConnectModal: React.FC<MobileConnectModalProps> = ({ isOpen, onClose }) => {
+const MobileConnectModal: React.FC<MobileConnectModalProps> = ({ isOpen, onClose, isElectron }) => {
   const { t } = useContext(LanguageContext);
   const [localIp, setLocalIp] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (isOpen) {
-      const savedIp = localStorage.getItem(IP_STORAGE_KEY);
-      if (savedIp) {
-        setLocalIp(savedIp);
-        setIsEditing(false);
+    const initializeIp = async () => {
+      setIsLoading(true);
+      if (isElectron && window.electronAPI) {
+        try {
+          const ip = await window.electronAPI.getLocalIP();
+          if (ip) {
+            setLocalIp(ip);
+            setIsEditing(false); // We have the IP, no need for editing.
+          } else {
+            // Fallback for Electron if IP detection fails
+            setIsEditing(true); 
+          }
+        } catch (error) {
+          console.error("Failed to get local IP from Electron:", error);
+          setIsEditing(true);
+        }
       } else {
-        setIsEditing(true);
+        // Browser environment logic
+        const savedIp = localStorage.getItem(IP_STORAGE_KEY);
+        if (savedIp) {
+          setLocalIp(savedIp);
+          setIsEditing(false);
+        } else {
+          setIsEditing(true);
+        }
       }
-    }
-  }, [isOpen]);
+      setIsLoading(false);
+    };
 
-  const port = useMemo(() => window.location.port || '80', []);
+    if (isOpen) {
+      initializeIp();
+    }
+  }, [isOpen, isElectron]);
+
+  const port = useMemo(() => window.location.port || (window.location.protocol === 'https:' ? '443' : '80'), []);
   
   const qrCodeUrl = useMemo(() => {
-    if (!localIp.match(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/)) {
+    const ipRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
+    if (!localIp || !ipRegex.test(localIp)) {
       return '';
     }
     const connectUrl = `http://${localIp}:${port}`;
@@ -36,7 +62,8 @@ const MobileConnectModal: React.FC<MobileConnectModalProps> = ({ isOpen, onClose
   }, [localIp, port]);
 
   const handleSave = () => {
-     if (localIp.match(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/)) {
+     const ipRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
+     if (ipRegex.test(localIp)) {
         localStorage.setItem(IP_STORAGE_KEY, localIp);
         setIsEditing(false);
      }
@@ -46,19 +73,33 @@ const MobileConnectModal: React.FC<MobileConnectModalProps> = ({ isOpen, onClose
     return null;
   }
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-[100] flex justify-center items-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-        <div className="flex justify-between items-center mb-4">
-          <h2 id="modal-title" className="text-2xl font-bold text-brand-dark">{t('mobileConnectTitle')}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-700 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+  const renderContent = () => {
+    if (isLoading) {
+        return <div className="text-center p-8">{t('loading')}...</div>
+    }
+    
+    // Electron automatic mode
+    if (isElectron && qrCodeUrl && !isEditing) {
+      return (
+        <div>
+          <p className="text-brand-secondary mb-6">{t('mobileConnectScanSubtitle')}</p>
+          <div className="flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg">
+              <img src={qrCodeUrl} alt="Connection QR Code" width="200" height="200" />
+              <p className="mt-2 text-sm font-semibold text-brand-dark">{t('scanToConnect')}</p>
+              <p className="text-xs text-gray-500">{localIp}:{port}</p>
+          </div>
+          <div className="flex justify-end items-center mt-6">
+              <button type="button" onClick={onClose} className="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 font-semibold transition-colors">
+                {t('close')}
+              </button>
+          </div>
         </div>
-        
-        {isEditing || !qrCodeUrl ? (
+      );
+    }
+
+    // Browser mode (or Electron fallback) - manual entry
+    if (isEditing || !qrCodeUrl) {
+       return (
           <div>
             <p className="text-brand-secondary mb-4">{t('mobileConnectSetupSubtitle')}</p>
             <div className="text-sm bg-gray-50 p-3 rounded-lg border space-y-1 mb-4">
@@ -89,22 +130,41 @@ const MobileConnectModal: React.FC<MobileConnectModalProps> = ({ isOpen, onClose
               </button>
             </div>
           </div>
-        ) : (
-          <div>
-            <p className="text-brand-secondary mb-6">{t('mobileConnectScanSubtitle')}</p>
-            <div className="flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg">
-                <img src={qrCodeUrl} alt="Connection QR Code" width="200" height="200" />
-                <p className="mt-2 text-sm font-semibold text-brand-dark">{t('scanToConnect')}</p>
-                 <p className="text-xs text-gray-500">{localIp}:{port}</p>
-            </div>
-            <div className="flex justify-between items-center mt-6">
-                <button onClick={() => setIsEditing(true)} className="text-sm text-brand-primary hover:underline">{t('updateIpAddress')}</button>
-                <button type="button" onClick={onClose} className="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 font-semibold transition-colors">
-                  {t('close')}
-                </button>
-            </div>
+       );
+    }
+    
+    // Browser mode - showing saved QR
+    return (
+        <div>
+          <p className="text-brand-secondary mb-6">{t('mobileConnectScanSubtitle')}</p>
+          <div className="flex flex-col items-center justify-center p-4 bg-gray-100 rounded-lg">
+              <img src={qrCodeUrl} alt="Connection QR Code" width="200" height="200" />
+              <p className="mt-2 text-sm font-semibold text-brand-dark">{t('scanToConnect')}</p>
+              <p className="text-xs text-gray-500">{localIp}:{port}</p>
           </div>
-        )}
+          <div className="flex justify-between items-center mt-6">
+              <button onClick={() => setIsEditing(true)} className="text-sm text-brand-primary hover:underline">{t('updateIpAddress')}</button>
+              <button type="button" onClick={onClose} className="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 font-semibold transition-colors">
+                {t('close')}
+              </button>
+          </div>
+        </div>
+    );
+  };
+
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-[100] flex justify-center items-center p-4">
+      <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div className="flex justify-between items-center mb-4">
+          <h2 id="modal-title" className="text-2xl font-bold text-brand-dark">{t('mobileConnectTitle')}</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-700 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        {renderContent()}
       </div>
     </div>
   );

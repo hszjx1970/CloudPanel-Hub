@@ -50,8 +50,14 @@ const App: React.FC = () => {
   const [isNewFolderModalOpen, setIsNewFolderModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobileConnectModalOpen, setIsMobileConnectModalOpen] = useState(false);
+  const [isElectron, setIsElectron] = useState(false);
 
   useEffect(() => {
+    // Check if the electronAPI is exposed on the window object
+    if (window.electronAPI) {
+      setIsElectron(true);
+    }
+
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredInstallPrompt(e as BeforeInstallPromptEvent);
@@ -340,7 +346,7 @@ const App: React.FC = () => {
         onSetDestination={(id) => { setDestinationId(id); setIsSidebarOpen(false); }}
         onAddNewAccount={handleAddNewAccount}
         onInstall={handleInstallClick}
-        canInstall={!!deferredInstallPrompt}
+        canInstall={!!deferredInstallPrompt && !isElectron}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
         onOpenMobileConnect={() => setIsMobileConnectModalOpen(true)}
@@ -434,6 +440,7 @@ const App: React.FC = () => {
       <MobileConnectModal
         isOpen={isMobileConnectModalOpen}
         onClose={() => setIsMobileConnectModalOpen(false)}
+        isElectron={isElectron}
       />
 
     </div>
