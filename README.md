@@ -1,4 +1,4 @@
-# Cloud Transfer Hub v1.0
+# Cloud Transfer Hub v2.0
 
 <img src="./assets/icon.png" width="96" alt="Cloud Transfer Hub Icon">
 
